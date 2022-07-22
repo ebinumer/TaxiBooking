@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Go Taxi</string>
+    <string name="check_internet">Please check your internet connection</string>
+    <string name="label_phone_number">Username</string>
+    <string name="email">Email</string>
+    <string name="hint_enter_phone_number">Enter Username</string>
+    <string name="hint_enter_email">Enter Email</string>
+    <string name="password">Password</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="new_signup">New User? Signup here</string>
+    <string name="register">Register</string>
+    <string name="error">Something error occurred</string>
+    <string name="username">UserName</string>
+    <string name="mob">Mobile</string>
+    <string name="update_success">Updated Successfully</string>
+    <string name="title_activity_home_map">HomeMapActivity</string>
+    <string name="map_api_key">AIzaSyBtpCf4EsR4ydc_xQwLSgcUOfujl7gvjwA</string>
+    <string name="quote">It\'s the only thing to do when you\'re in London \n- hang out in a taxi</string>
+</resources>
