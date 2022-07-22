@@ -1,11 +1,14 @@
 package com.example.taxibooking.ui.trip;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -90,6 +93,12 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
         binding.myLocationButton.setOnClickListener((view) -> {
             getDeviceLocation();
         });
+        binding.driverSheet.callBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:000000000"));
+            }});
 
     }
 
@@ -156,7 +165,7 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     private Bitmap mapBitmapIcon() {
         int height = 80;
         int width = 80;
-        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.car_icon);
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.car);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
         return smallMarker;
