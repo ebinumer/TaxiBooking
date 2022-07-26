@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
+import com.example.taxibooking.ui.PaymentActivity;
 import com.example.taxibooking.ui.SplashActivity;
 import com.example.taxibooking.ui.trip.TripActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -49,16 +51,23 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.booking_confirm_layout, container, false);
         TextView distanceText = view.findViewById(R.id.tv_distance);
+        TextView priceText = view.findViewById(R.id.tv_pound);
         Button btnConfirm = view.findViewById(R.id.btn_confirm);
         distanceText.setText(df.format(distance / 1000) + " Km");
+        Double Km = Double.valueOf(df.format(distance / 1000));
+
+        priceText.setText(Km * 3 + " €");
         calculateFare();
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sessionManager.setReqTrip(true);
-                Intent i;
-                i = new Intent(requireContext(), TripActivity.class);
-                startActivity(i);
+                if (Km >= 100) {
+                    Toast.makeText(requireContext(),"Can't request a trip, Your Distance is Above 100 km",Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent i;
+                    i = new Intent(requireContext(), PaymentActivity.class);
+                    startActivity(i);
+                }
             }
         });
 

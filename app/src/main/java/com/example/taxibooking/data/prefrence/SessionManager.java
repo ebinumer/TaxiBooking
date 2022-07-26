@@ -92,6 +92,9 @@ public class SessionManager {
     public String getUserId() {
         return shpref.getString(USERID, "");
     }
+    public String getMobile() {
+        return shpref.getString(MOBILE, "");
+    }
 
     public String getUserName() {
         return shpref.getString(USERNAME, "");

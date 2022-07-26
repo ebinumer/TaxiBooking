@@ -34,6 +34,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private ActivityTripBinding binding;
@@ -73,18 +75,36 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
     private void setupDriverDetails(Driver driver) {
+
         binding.driverSheet.tvDriverName.setText(driver.username);
     }
 
     private void observeMarker(Driver driver) {
+
+        if(Objects.equals(driver.latitude, "0.0")){
+            binding.textView4.setText("Waiting for a driver....");
+            binding.myLocationButton.setVisibility(View.GONE);
+            binding.driverSheet.mainDriverDetail.setVisibility(View.GONE);
+            mMap.clear();
+            getDeviceLocation();
+        } else{
+            binding.textView4.setText("Your ride is on the way");
+            binding.myLocationButton.setVisibility(View.VISIBLE);
+            binding.driverSheet.mainDriverDetail.setVisibility(View.VISIBLE);
         if (carMarker != null)
             carMarker.remove();
+
         LatLng carLatLng = new LatLng(Double.valueOf(driver.latitude), Double.valueOf(driver.longitude));
         carMarker = mMap.addMarker(new MarkerOptions().position(carLatLng).draggable(false).icon(BitmapDescriptorFactory.fromBitmap(mapBitmapIcon())));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(carLatLng, DEFAULT_ZOOM));
     }
+    }
 
     private void initView() {
+        binding.textView4.setText("Waiting for a driver....");
+        binding.myLocationButton.setVisibility(View.GONE);
+        binding.driverSheet.mainDriverDetail.setVisibility(View.GONE);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);

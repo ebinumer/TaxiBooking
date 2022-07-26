@@ -19,6 +19,9 @@
         android:theme="@style/Theme.TaxiBooking"
         tools:targetApi="31">
         <activity
+            android:name=".ui.PaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.trip.TripActivity"
             android:exported="false" />
         <activity

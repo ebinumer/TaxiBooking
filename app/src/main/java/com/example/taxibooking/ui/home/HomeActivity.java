@@ -187,8 +187,8 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void drawPolyLinePath(GoogleMap map, LatLng currentLocation, LatLng destination) {
-        sessionManager.setMyLat(String.valueOf(destination.latitude));
-        sessionManager.setMyLang(String.valueOf(destination.longitude));
+        sessionManager.setMyLat(String.valueOf(currentLocation.latitude));
+        sessionManager.setMyLang(String.valueOf(currentLocation.longitude));
         sessionManager.setDestinationLat(String.valueOf(destination.latitude));
         sessionManager.setDestinationLang( String.valueOf(destination.longitude));
         if (polyline != null)

@@ -64,7 +64,8 @@ public class SignUpActivity extends BaseActivity {
     private void registerUser() {
         if (NetworkManager.isNetworkAvailable(SignUpActivity.this)) {
             showLoading(this);
-
+            sessionManager.setUserName(binding.txtUname.getText().toString());
+            sessionManager.setMobile(binding.txtMob.getText().toString());
             Map<String, Object> user = new HashMap<>();
             user.put("username", binding.txtUname.getText().toString());
             user.put("email", binding.txtEmail.getText().toString());
