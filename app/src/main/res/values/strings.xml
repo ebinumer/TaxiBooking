@@ -15,5 +15,6 @@
     <string name="update_success">Updated Successfully</string>
     <string name="title_activity_home_map">HomeMapActivity</string>
     <string name="map_api_key">AIzaSyBtpCf4EsR4ydc_xQwLSgcUOfujl7gvjwA</string>
+    <string name="no_order">Sorry, No trips are available at the moment!</string>
     <string name="quote">It\'s the only thing to do when you\'re in London \n- hang out in a taxi</string>
 </resources>

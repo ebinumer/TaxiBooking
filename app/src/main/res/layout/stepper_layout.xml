@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="8dp"
+        android:src="@drawable/ic_circle" />
+
+    <View
+        android:id="@+id/imageView7"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="9dp"
+        android:background="@drawable/dotted_line"
+        android:layerType="software" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="8dp"
+        android:src="@drawable/ic_circle" />
+
+</LinearLayout>
