@@ -57,4 +57,15 @@ public class Trip {
     public void setDestination(String destination) {
         this.destination = destination;
     }
+
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "username='" + username + '\'' +
+                ", phone='" + phone + '\'' +
+                ", amount='" + amount + '\'' +
+                ", pickUp='" + pickUp + '\'' +
+                ", destination='" + destination + '\'' +
+                '}';
+    }
 }

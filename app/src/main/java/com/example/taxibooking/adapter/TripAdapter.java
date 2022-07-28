@@ -41,7 +41,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.binding.tvPickup.setText(model.getPickUp());
         holder.binding.tvFare.setText("€" + model.getAmount());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.binding.btnPick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onItemClick(position);

@@ -2,6 +2,7 @@ package com.example.taxibooking.ui.driver;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Location;
@@ -18,8 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
 import com.example.taxibooking.adapter.TripAdapter;
+import com.example.taxibooking.data.model.Driver;
 import com.example.taxibooking.data.model.Trip;
 import com.example.taxibooking.databinding.ActivityTripListBinding;
+import com.example.taxibooking.ui.trip.OnTripActivity;
 import com.example.taxibooking.utils.LocationUtil;
 import com.example.taxibooking.utils.NetworkManager;
 import com.example.taxibooking.utils.OnItemClickListener;
@@ -28,7 +31,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -39,6 +44,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
     private ActivityTripListBinding binding;
     private long mLastClickTime = 0;
     private FirebaseFirestore fb;
+    private DatabaseReference mDatabase = getDatabaseReferenceInstance();
     private LatLng currentLatLng;
     LocationUtil locationUtil;
     private TripAdapter adapter;
@@ -79,6 +85,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
         ) {
             locationPermissionGranted = true;
+            getDeviceLocation();
             getTrips();
 
         } else {
@@ -98,6 +105,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                     grantResults[1] == PackageManager.PERMISSION_GRANTED
             ) {
                 locationPermissionGranted = true;
+                getDeviceLocation();
                 getTrips();
             }
         }
@@ -123,6 +131,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                             Location lastKnownLocation = task.getResult();
                             if (lastKnownLocation != null) {
                                 currentLatLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                                Log.d(TAG, "onComplete: " + currentLatLng);
                             }
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
@@ -170,8 +179,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                                                     documentSnapshot.get("username").toString(),
                                                     documentSnapshot.get("mobile").toString(),
                                                     "100", pickUp.getLocality(), dest.getLocality()
-                                            )
-                                    );
+                                            ));
                                 }
                                 hideLoading();
                                 if (tripList.size() > 0) {
@@ -197,6 +205,35 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
     @Override
     public void onItemClick(Integer position) {
+        Trip tripData = tripList.get(position);
+        Log.d(TAG, tripData.toString());
+        Driver updatedDriverData = new Driver(
+                "Driver",
+                "123456",
+                String.valueOf(currentLatLng.latitude),
+                String.valueOf(currentLatLng.longitude),
+                tripData.getUsername()
+        );
+        Log.d(TAG, updatedDriverData.toString());
+        updateDataToDb(updatedDriverData);
+    }
 
+    private void updateDataToDb(Driver driverData) {
+        DatabaseReference reference = mDatabase.child("driver");
+        reference.child("driver1").setValue(driverData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        showToast(TripListActivity.this, "Trip Updated successfully");
+                        Intent intent = new Intent(TripListActivity.this, OnTripActivity.class);
+                        startActivity(intent);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, e.getMessage());
+                        showToast(TripListActivity.this, "Trip Update failed");
+                    }
+                });
     }
 }

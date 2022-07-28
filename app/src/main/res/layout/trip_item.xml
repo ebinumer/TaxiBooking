@@ -61,6 +61,7 @@
             android:src="@drawable/taxi" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_pick"
             android:layout_width="200dp"
             android:layout_height="60dp"
             android:layout_below="@+id/tv_dest"
