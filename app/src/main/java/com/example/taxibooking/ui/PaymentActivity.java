@@ -97,6 +97,7 @@ public class PaymentActivity extends BaseActivity {
                     trip.put("destination_long", sessionManager.getDestinationLang());
                     trip.put("username", sessionManager.getUserName());
                     trip.put("mobile", sessionManager.getMobile());
+                    trip.put("order_status", "waiting");
 
                     FirebaseFirestore fireStoreInstance = getFireStoreInstance();
                     fireStoreInstance.collection("Trip")

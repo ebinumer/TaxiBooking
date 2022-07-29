@@ -6,16 +6,24 @@ public class Trip {
     public String phone;
     public String amount;
     public String pickUp;
+    public String pickUpLat;
+    public String pickUpLong;
     public String destination;
+    public String destinationLat;
+    public String destinationLong;
 
     Trip() {}
 
-    public Trip(String username, String phone, String amount, String pickUp, String destination) {
+    public Trip(String username, String phone, String amount, String pickUp,String pickUpLat,String pickUpLong, String destination,String destinationLat,String destinationLong) {
         this.username = username;
         this.phone = phone;
         this.amount = amount;
         this.pickUp = pickUp;
+        this.pickUpLat =pickUpLat;
+        this.pickUpLong = pickUpLong;
         this.destination = destination;
+        this.destinationLat = destinationLat;
+        this.destinationLong = destinationLong;
     }
 
     public String getUsername() {
@@ -50,12 +58,44 @@ public class Trip {
         this.pickUp = pickUp;
     }
 
+    public String getPickUpLat() {
+        return pickUpLat;
+    }
+
+    public void setPickUpLat(String pickUp) {
+        this.pickUpLat = pickUp;
+    }
+
+    public String getPickUpLong() {
+        return pickUpLong;
+    }
+
+    public void setPickUpLong(String pickUp) {
+        this.pickUpLong = pickUp;
+    }
+
     public String getDestination() {
         return destination;
     }
 
     public void setDestination(String destination) {
         this.destination = destination;
+    }
+
+    public String getDestinationLat() {
+        return destinationLat;
+    }
+
+    public void setDestinationLat(String destination) {
+        this.destinationLat = destination;
+    }
+
+    public String getDestinationLong() {
+        return destinationLong;
+    }
+
+    public void setDestinationLong(String destination) {
+        this.destinationLong = destination;
     }
 
     @Override

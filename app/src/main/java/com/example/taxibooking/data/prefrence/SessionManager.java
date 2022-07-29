@@ -24,6 +24,9 @@ public class SessionManager {
     private static final String MY_LANG = "my_lang";
     private static final String DESTINATION_LAT = "destination_lat";
     private static final String DESTINATION_LANG = "destination_lang";
+    private static final String SELECT_ORDER = "select_order";
+    private static final String DRIVER_LAT = "driver_lat";
+    private static final String DRIVER_LONG = "driver_lang";
 
 
     public SessionManager(Context context) {
@@ -83,7 +86,19 @@ public class SessionManager {
         editor.putString(DESTINATION_LANG, type);
         editor.apply();
     }
+    public void setSelectOrder(Boolean type) {
+        editor.putBoolean(SELECT_ORDER, type);
+        editor.apply();
+    }
 
+    public void setDriverLat(String type) {
+        editor.putString(DRIVER_LAT, type);
+        editor.apply();
+    }
+    public void setDriverLong(String type) {
+        editor.putString(DRIVER_LONG, type);
+        editor.apply();
+    }
 
     public boolean isLoggedin() {
         return shpref.getBoolean(KEY_IS_LOGED_IN, false);
@@ -111,6 +126,9 @@ public class SessionManager {
     public Boolean getReqTrip() {
         return shpref.getBoolean(REQ_TRIP, false);
     }
+    public Boolean getSelectOrder() {
+        return shpref.getBoolean(SELECT_ORDER, false);
+    }
 
     public String getMyLat() {
         return shpref.getString(MY_LAT, "");
@@ -124,7 +142,12 @@ public class SessionManager {
     public String getDestinationLang() {
         return shpref.getString(DESTINATION_LANG, "");
     }
-
+    public String getDriverLat() {
+        return shpref.getString(DRIVER_LAT, "");
+    }
+    public String getDriverLong() {
+        return shpref.getString(DRIVER_LONG, "");
+    }
 
     public void clear() {
         editor.clear();

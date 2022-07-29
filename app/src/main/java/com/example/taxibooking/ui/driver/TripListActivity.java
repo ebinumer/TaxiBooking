@@ -21,7 +21,9 @@ import com.example.taxibooking.R;
 import com.example.taxibooking.adapter.TripAdapter;
 import com.example.taxibooking.data.model.Driver;
 import com.example.taxibooking.data.model.Trip;
+import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityTripListBinding;
+import com.example.taxibooking.ui.home.HomeActivity;
 import com.example.taxibooking.ui.trip.OnTripActivity;
 import com.example.taxibooking.utils.LocationUtil;
 import com.example.taxibooking.utils.NetworkManager;
@@ -53,6 +55,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
     private FusedLocationProviderClient fusedLocationProviderClient;
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private final ArrayList<Trip> tripList = new ArrayList<>();
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
         binding = ActivityTripListBinding.inflate(getLayoutInflater());
         locationUtil = new LocationUtil(this);
         setContentView(binding.getRoot());
+        sessionManager = new SessionManager(TripListActivity.this);
         initView();
     }
 
@@ -178,7 +182,8 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                                             new Trip(
                                                     documentSnapshot.get("username").toString(),
                                                     documentSnapshot.get("mobile").toString(),
-                                                    "100", pickUp.getLocality(), dest.getLocality()
+                                                    "100", pickUp.getLocality(),documentSnapshot.get("current_lat").toString(),documentSnapshot.get("current_long").toString(),
+                                                    dest.getLocality(),documentSnapshot.get("destination_lat").toString(),documentSnapshot.get("destination_long").toString()
                                             ));
                                 }
                                 hideLoading();
@@ -205,6 +210,12 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
     @Override
     public void onItemClick(Integer position) {
+        sessionManager.setMyLat(tripList.get(position).getPickUpLat());
+        sessionManager.setMyLang(tripList.get(position).getPickUpLong());
+
+        sessionManager.setDestinationLat(tripList.get(position).getDestinationLat());
+        sessionManager.setDestinationLang(tripList.get(position).getDestinationLong());
+
         Trip tripData = tripList.get(position);
         Log.d(TAG, tripData.toString());
         Driver updatedDriverData = new Driver(
@@ -215,10 +226,13 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                 tripData.getUsername()
         );
         Log.d(TAG, updatedDriverData.toString());
-        updateDataToDb(updatedDriverData);
+        updateDataToDb(updatedDriverData,position);
+
+
+
     }
 
-    private void updateDataToDb(Driver driverData) {
+    private void updateDataToDb(Driver driverData, Integer position) {
         DatabaseReference reference = mDatabase.child("driver");
         reference.child("driver1").setValue(driverData)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
