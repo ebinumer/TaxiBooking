@@ -21,10 +21,12 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
+import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityOnTripBinding;
 import com.example.taxibooking.databinding.ActivityTripListBinding;
+import com.example.taxibooking.ui.auth.LoginActivity;
 import com.example.taxibooking.ui.driver.TripListActivity;
 import com.example.taxibooking.ui.home.HomeActivity;
 import com.example.taxibooking.utils.LocationUtil;
@@ -45,13 +47,16 @@ import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     private ActivityOnTripBinding binding;
     private GoogleMap mMap;
     LocationUtil locationUtil;
@@ -69,11 +74,12 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
     Polyline polyline;
     double distance, fare;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    LocationManager manager ;
-    boolean statusOfGPS ;
+    LocationManager manager;
+    boolean statusOfGPS;
     private SessionManager sessionManager;
     LatLng customerLocation;
     LatLng customerDestination;
+    private FirebaseFirestore fb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,44 +88,101 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
         setContentView(binding.getRoot());
         sessionManager = new SessionManager(OnTripActivity.this);
         locationUtil = new LocationUtil(OnTripActivity.this);
-         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_small);
         mapFragment.getMapAsync(this);
-        getDeviceLocation();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        getLocationPermission();
+        getDeviceLocation();
+        fb = getFireStoreInstance();
 
-        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         statusOfGPS = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        customerLocation = new LatLng( Double.parseDouble(sessionManager.getMyLat()),Double.parseDouble(sessionManager.getMyLang()));
-        customerDestination = new LatLng( Double.parseDouble(sessionManager.getDestinationLat()),Double.parseDouble(sessionManager.getDestinationLang()));
+        customerLocation = new LatLng(Double.parseDouble(sessionManager.getMyLat()), Double.parseDouble(sessionManager.getMyLang()));
+        customerDestination = new LatLng(Double.parseDouble(sessionManager.getDestinationLat()), Double.parseDouble(sessionManager.getDestinationLang()));
         locationUtil.getLocationFromLatLong(customerLocation);
-        Address loc =  locationUtil.getLocationFromLatLong(customerLocation);
+        Address loc = locationUtil.getLocationFromLatLong(customerLocation);
         binding.tvCstmrLocation.setText(loc.getAddressLine(0));
-        Address des =  locationUtil.getLocationFromLatLong(customerDestination);
+        Address des = locationUtil.getLocationFromLatLong(customerDestination);
         binding.tvDestination.setText(des.getAddressLine(0));
-
+        if (sessionManager.getDriverStatus().equals("Started")) {
+            binding.startLayout.setVisibility(View.GONE);
+            binding.endLayout.setVisibility(View.VISIBLE);
+        }
+        else{
+            binding.startLayout.setVisibility(View.VISIBLE);
+            binding.endLayout.setVisibility(View.GONE);
+        }
         binding.btnCustomerl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getDeviceLocation();
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse("http://maps.google.com/maps?saddr="+currentLatLng.latitude+","+currentLatLng.longitude+
-                                "&daddr="+sessionManager.getMyLat()+","+sessionManager.getMyLang()));
+                        Uri.parse("http://maps.google.com/maps?saddr=" + currentLatLng.latitude + "," + currentLatLng.longitude +
+                                "&daddr=" + sessionManager.getMyLat() + "," + sessionManager.getMyLang()));
                 startActivity(intent);
-            }    });
+            }
+        });
 
         binding.destinationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getDeviceLocation();
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse("http://maps.google.com/maps?saddr="+currentLatLng.latitude+","+currentLatLng.longitude+
-                                "&daddr="+sessionManager.getDestinationLat()+","+sessionManager.getDestinationLang()));
+                        Uri.parse("http://maps.google.com/maps?saddr=" + currentLatLng.latitude + "," + currentLatLng.longitude +
+                                "&daddr=" + sessionManager.getDestinationLat() + "," + sessionManager.getDestinationLang()));
                 startActivity(intent);
-            }    });
-
             }
+        });
+
+        binding.strtTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fb.collection("Trip")
+                        .document(sessionManager.getOrderId())
+                        .update("status", "Started")
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                sessionManager.setDriverStatus("Started");
+                                binding.startLayout.setVisibility(View.GONE);
+                                binding.endLayout.setVisibility(View.VISIBLE);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+
+                            }
+                        });
+            }
+        });
+
+        binding.endTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fb.collection("Trip")
+                        .document(sessionManager.getOrderId())
+                        .update("status", "Completed")
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                sessionManager.setDriverStatus("no_selected");
+                                Intent intent = new Intent(OnTripActivity.this, TripListActivity.class);
+                                startActivity(intent);
+                                finishAffinity();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+
+                            }
+                        });
+            }
+        });
+    }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -130,7 +193,7 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
         ));
 
         getLocationPermission();
-        drawPolyLinePath(mMap,customerLocation,customerDestination);
+        drawPolyLinePath(mMap, customerLocation, customerDestination);
 
     }
 
@@ -152,6 +215,7 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
 
         ) {
             locationPermissionGranted = true;
+            getDeviceLocation();
 
         } else {
             ActivityCompat.requestPermissions(this,
@@ -159,6 +223,7 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
+
     private void drawPolyLinePath(GoogleMap map, LatLng currentLocation, LatLng destination) {
 
         if (polyline != null)
@@ -175,7 +240,7 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
         Log.d("Map Distance", String.valueOf(distance / 1000));
         CustomerMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Customer").draggable(true));
         destinationMarker = mMap.addMarker(new MarkerOptions().position(destination).title("destination").draggable(true));
-         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
     }
 
     /**
@@ -189,6 +254,7 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
          */
         try {
             if (locationPermissionGranted) {
+
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
@@ -209,5 +275,18 @@ public class OnTripActivity extends AppCompatActivity implements OnMapReadyCallb
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        statusOfGPS = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
     }
 }

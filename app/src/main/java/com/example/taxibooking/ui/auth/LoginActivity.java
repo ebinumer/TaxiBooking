@@ -12,6 +12,7 @@ import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityLoginBinding;
+import com.example.taxibooking.ui.driver.TripListActivity;
 import com.example.taxibooking.ui.home.HomeActivity;
 import com.example.taxibooking.utils.NetworkManager;
 import com.example.taxibooking.utils.Validation;
@@ -81,16 +82,26 @@ public class LoginActivity extends BaseActivity {
                                     if (Objects.requireNonNull(documentSnapshot.get("email")).toString().equals(userName) &&
                                             Objects.requireNonNull(documentSnapshot.get("password")).toString().equals(passWord)) {
                                         isMatch = true;
-                                        sessionManager.setUserId(documentSnapshot.get("userid").toString());
-                                        sessionManager.setDocumentId(documentSnapshot.getId());
+
+
                                         sessionManager.setUserName(documentSnapshot.get("username").toString());
                                         sessionManager.setMobile(documentSnapshot.get("mobile").toString());
                                         sessionManager.setLogin(true);
+                                        if(Objects.requireNonNull(documentSnapshot.get("username")).toString().equals("driver")){
+                                            sessionManager.setIsDriver(true);
+                                        }
                                         Log.e("uname", documentSnapshot.get("username").toString());
                                         showToast(LoginActivity.this, "Login Successfully");
-                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finishAffinity();
+                                        if(sessionManager.getIsDriver()){
+                                            Intent intent = new Intent(LoginActivity.this, TripListActivity.class);
+                                            startActivity(intent);
+                                            finishAffinity();
+                                        }
+                                        else {
+                                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                            startActivity(intent);
+                                            finishAffinity();
+                                        }
                                     } else
                                         isMatch = false;
                                 }

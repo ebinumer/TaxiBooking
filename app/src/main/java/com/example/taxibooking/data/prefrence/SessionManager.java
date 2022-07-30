@@ -27,6 +27,9 @@ public class SessionManager {
     private static final String SELECT_ORDER = "select_order";
     private static final String DRIVER_LAT = "driver_lat";
     private static final String DRIVER_LONG = "driver_lang";
+    private static final String ORDER_ID = "order_id";
+    private static final String IS_DRIVER = "is_driver";
+    private static final String DRIVER_STATUS = "driver_status";
 
 
     public SessionManager(Context context) {
@@ -38,7 +41,7 @@ public class SessionManager {
     public void setLogin(boolean isLoggedin) {
         editor.putBoolean(KEY_IS_LOGED_IN, isLoggedin);
         editor.apply();
-        Log.e(TAG, "userlogin session");
+
     }
 
     public void setUserId(String name) {
@@ -48,6 +51,20 @@ public class SessionManager {
 
     public void setUserName(String name) {
         editor.putString(USERNAME, name);
+        editor.apply();
+    }
+   public void setDriverStatus(String name) {
+        editor.putString(DRIVER_STATUS, name);
+        editor.apply();
+    }
+
+    public void setIsDriver(Boolean name) {
+        editor.putBoolean(IS_DRIVER, name);
+        editor.apply();
+    }
+
+    public void setOrderId(String name) {
+        editor.putString(ORDER_ID, name);
         editor.apply();
     }
 
@@ -104,6 +121,9 @@ public class SessionManager {
         return shpref.getBoolean(KEY_IS_LOGED_IN, false);
     }
 
+    public Boolean getIsDriver() {
+        return shpref.getBoolean(IS_DRIVER, false);
+    }
     public String getUserId() {
         return shpref.getString(USERID, "");
     }
@@ -113,6 +133,9 @@ public class SessionManager {
 
     public String getUserName() {
         return shpref.getString(USERNAME, "");
+    }
+    public String getOrderId() {
+        return shpref.getString(ORDER_ID, "");
     }
 
     public String getDocumentId() {
@@ -147,6 +170,10 @@ public class SessionManager {
     }
     public String getDriverLong() {
         return shpref.getString(DRIVER_LONG, "");
+    }
+
+    public String getDriverStatus() {
+        return shpref.getString(DRIVER_STATUS, "no_selected");
     }
 
     public void clear() {

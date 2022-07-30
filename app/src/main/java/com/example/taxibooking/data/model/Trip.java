@@ -2,6 +2,7 @@ package com.example.taxibooking.data.model;
 
 public class Trip {
 
+    public String id;
     public String username;
     public String phone;
     public String amount;
@@ -14,7 +15,8 @@ public class Trip {
 
     Trip() {}
 
-    public Trip(String username, String phone, String amount, String pickUp,String pickUpLat,String pickUpLong, String destination,String destinationLat,String destinationLong) {
+    public Trip(String id,String username, String phone, String amount, String pickUp,String pickUpLat,String pickUpLong, String destination,String destinationLat,String destinationLong) {
+      this.id = id;
         this.username = username;
         this.phone = phone;
         this.amount = amount;
@@ -24,6 +26,14 @@ public class Trip {
         this.destination = destination;
         this.destinationLat = destinationLat;
         this.destinationLong = destinationLong;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String username) {
+        this.id = id;
     }
 
     public String getUsername() {

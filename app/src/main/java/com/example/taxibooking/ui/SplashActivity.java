@@ -9,8 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.ui.auth.LoginActivity;
+import com.example.taxibooking.ui.driver.TripListActivity;
 import com.example.taxibooking.ui.home.HomeActivity;
+import com.example.taxibooking.ui.trip.OnTripActivity;
 import com.example.taxibooking.ui.trip.TripActivity;
+
+import java.util.Objects;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -27,6 +31,21 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
 
                 if (sessionManager.isLoggedin()) {
+                    if (sessionManager.getIsDriver()){
+                        if (Objects.equals(sessionManager.getDriverStatus(), "no_selected")){
+                            Intent i;
+                            i = new Intent(SplashActivity.this,
+                                    TripListActivity.class);
+                            startActivity(i);
+                        }
+                        else {
+                            Intent i;
+                            i = new Intent(SplashActivity.this,
+                                    OnTripActivity.class);
+                            startActivity(i);
+                        }
+                    }
+                    else{
                     if(sessionManager.getReqTrip()) {
                         Intent i;
                         i = new Intent(SplashActivity.this,
@@ -38,8 +57,9 @@ public class SplashActivity extends AppCompatActivity {
                         i = new Intent(SplashActivity.this,
                                 HomeActivity.class);
                         startActivity(i);
-                    }
-                } else {
+                    }}
+                }
+                else {
                     Intent i = new Intent(SplashActivity.this,
                             LoginActivity.class);
                     startActivity(i);

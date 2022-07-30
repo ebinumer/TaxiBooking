@@ -170,6 +170,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                             if (task.isSuccessful()) {
                                 tripList.clear();
                                 for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+
                                     Address pickUp = locationUtil.getLocationFromLatLong(
                                             new LatLng(
                                                     Double.valueOf(documentSnapshot.get("current_lat").toString()),
@@ -178,14 +179,18 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                                             new LatLng(
                                                     Double.valueOf(documentSnapshot.get("destination_lat").toString()),
                                                     Double.valueOf(documentSnapshot.get("destination_long").toString())));
+
+                                    if(!documentSnapshot.get("status").toString().equals("Completed")){
                                     tripList.add(
                                             new Trip(
+                                                    documentSnapshot.getId(),
                                                     documentSnapshot.get("username").toString(),
                                                     documentSnapshot.get("mobile").toString(),
                                                     "100", pickUp.getLocality(),documentSnapshot.get("current_lat").toString(),documentSnapshot.get("current_long").toString(),
                                                     dest.getLocality(),documentSnapshot.get("destination_lat").toString(),documentSnapshot.get("destination_long").toString()
                                             ));
-                                }
+
+                                }}
                                 hideLoading();
                                 if (tripList.size() > 0) {
                                     binding.rvTrips.setVisibility(View.VISIBLE);
@@ -215,6 +220,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
         sessionManager.setDestinationLat(tripList.get(position).getDestinationLat());
         sessionManager.setDestinationLang(tripList.get(position).getDestinationLong());
+        sessionManager.setOrderId(tripList.get(position).getId());
 
         Trip tripData = tripList.get(position);
         Log.d(TAG, tripData.toString());
@@ -233,6 +239,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
     }
 
     private void updateDataToDb(Driver driverData, Integer position) {
+
         DatabaseReference reference = mDatabase.child("driver");
         reference.child("driver1").setValue(driverData)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -247,6 +254,24 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                     public void onFailure(@NonNull Exception e) {
                         Log.e(TAG, e.getMessage());
                         showToast(TripListActivity.this, "Trip Update failed");
+                    }
+                });
+
+        fb.collection("Trip")
+                .document(sessionManager.getOrderId())
+                .update("status", "Picked")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        hideLoading();
+                        sessionManager.setDriverStatus("Picked");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        hideLoading();
+                        Log.e("exception in request", String.valueOf(e));
+
                     }
                 });
     }
