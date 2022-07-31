@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.example.taxibooking.data.model.Driver;
 import com.example.taxibooking.data.model.Trip;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityTripListBinding;
+import com.example.taxibooking.ui.auth.LoginActivity;
 import com.example.taxibooking.ui.home.HomeActivity;
 import com.example.taxibooking.ui.trip.OnTripActivity;
 import com.example.taxibooking.utils.LocationUtil;
@@ -72,6 +74,12 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
         fb = getFireStoreInstance();
         getLocationPermission();
         setupRestaurantsRecyclerView();
+        binding.driverLogout.setOnClickListener((view) -> {
+            sessionManager.clear();
+            Intent intent = new Intent(TripListActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finishAffinity();
+        });
     }
 
     private void getLocationPermission() {
