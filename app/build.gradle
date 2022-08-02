@@ -70,7 +70,7 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     //Lottie
-    implementation 'com.airbnb.android:lottie:4.2.0'
+    implementation 'com.airbnb.android:lottie:5.2.0'
 
     //gson
     implementation 'com.google.code.gson:gson:2.8.9'
