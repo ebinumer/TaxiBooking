@@ -141,7 +141,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
             public void onClick(View view) {
                 fb.collection("Trip")
                         .document(sessionManager.getOrderId())
-                        .update("status", "Started")
+                        .update("order_status", "Started")
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -164,7 +164,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
             public void onClick(View view) {
                 fb.collection("Trip")
                         .document(sessionManager.getOrderId())
-                        .update("status", "Completed")
+                        .update("order_status", "Completed")
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {

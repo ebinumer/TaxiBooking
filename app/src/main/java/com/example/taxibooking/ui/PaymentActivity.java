@@ -27,7 +27,7 @@ import java.util.Map;
 public class PaymentActivity extends BaseActivity {
     private ActivityPaymentBinding binding;
     private String type;
-    String checkIn, checkOut, total,image,location,name;
+    String checkIn, checkOut, total,image,location,name,Distence,Price;
     int adult, children, room;
     private SessionManager sessionManager;
 
@@ -41,6 +41,12 @@ public class PaymentActivity extends BaseActivity {
     }
 
     private void initView() {
+
+         Distence = getIntent().getStringExtra("Distence");
+         Price = getIntent().getStringExtra("price");
+         binding.tvDistance.setText(Distence+ " Km");
+         binding.tvDistance.setText(Distence+ " Km");
+         binding.tvPound.setText(Price+ " £");
 
         binding.radioDebit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -97,7 +103,10 @@ public class PaymentActivity extends BaseActivity {
                     trip.put("destination_long", sessionManager.getDestinationLang());
                     trip.put("username", sessionManager.getUserName());
                     trip.put("mobile", sessionManager.getMobile());
+                    trip.put("Charge", sessionManager.getMobile());
                     trip.put("order_status", "waiting");
+                    trip.put("price", Price);
+                    trip.put("distance", Distence);
 
                     FirebaseFirestore fireStoreInstance = getFireStoreInstance();
                     fireStoreInstance.collection("Trip")

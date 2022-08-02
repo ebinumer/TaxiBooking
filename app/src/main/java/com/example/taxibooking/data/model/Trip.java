@@ -6,6 +6,7 @@ public class Trip {
     public String username;
     public String phone;
     public String amount;
+    public String distance;
     public String pickUp;
     public String pickUpLat;
     public String pickUpLong;
@@ -15,11 +16,12 @@ public class Trip {
 
     Trip() {}
 
-    public Trip(String id,String username, String phone, String amount, String pickUp,String pickUpLat,String pickUpLong, String destination,String destinationLat,String destinationLong) {
+    public Trip(String id,String username, String phone, String amount,String distance ,String pickUp,String pickUpLat,String pickUpLong, String destination,String destinationLat,String destinationLong) {
       this.id = id;
         this.username = username;
         this.phone = phone;
         this.amount = amount;
+        this.distance = distance
         this.pickUp = pickUp;
         this.pickUpLat =pickUpLat;
         this.pickUpLong = pickUpLong;
@@ -55,9 +57,15 @@ public class Trip {
     public String getAmount() {
         return amount;
     }
+    public String getDistance() {
+        return distance;
+    }
 
     public void setAmount(String amount) {
         this.amount = amount;
+    }
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public String getPickUp() {

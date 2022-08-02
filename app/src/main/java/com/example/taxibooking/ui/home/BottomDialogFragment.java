@@ -55,17 +55,19 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
         Button btnConfirm = view.findViewById(R.id.btn_confirm);
         distanceText.setText(df.format(distance / 1000) + " Km");
         Double Km = Double.valueOf(df.format(distance / 1000));
-
-        priceText.setText(Km * 3 + " £");
+        String Price = String.format("%.2f", Km * 3);
+        priceText.setText(Price + " £");
         calculateFare();
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (Km >= 100) {
-                    Toast.makeText(requireContext(),"Can't request a trip, Your Distance is Above 100 km",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Can't request a trip, Your Distance is Above 100 km", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent i;
                     i = new Intent(requireContext(), PaymentActivity.class);
+                    i.putExtra("price", Price);
+                    i.putExtra("Distence", String.valueOf(Km));
                     startActivity(i);
                 }
             }

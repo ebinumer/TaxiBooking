@@ -1,6 +1,7 @@
 package com.example.taxibooking.ui.trip;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.model.Driver;
+import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityTripBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -42,15 +44,17 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     private DatabaseReference mDatabase = getDatabaseReferenceInstance();
     private String TAG = "TripActivity";
     private Marker carMarker;
+    private SessionManager sessionManager;
     private final float DEFAULT_ZOOM = 15.0f;
     private FusedLocationProviderClient fusedLocationProviderClient;
-
+    ProgressDialog progressDoalog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        sessionManager = new SessionManager(TripActivity.this);
         initView();
         setupListener();
 
@@ -81,13 +85,23 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
 
     private void observeMarker(Driver driver) {
 
-        if(Objects.equals(driver.latitude, "0.0")){
+        if(Objects.equals(driver.customer_name,sessionManager.getUserName() )){
+
+            progressDoalog = new ProgressDialog(TripActivity.this);
+            progressDoalog.setMax(100);
+            progressDoalog.setMessage("Waiting for Driver....");
+            progressDoalog.setTitle("Waiting for Driver to pick up this order...");
+            progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDoalog.show();
+
             binding.textView4.setText("Waiting for a driver....");
             binding.myLocationButton.setVisibility(View.GONE);
             binding.driverSheet.mainDriverDetail.setVisibility(View.GONE);
             mMap.clear();
+
             getDeviceLocation();
         } else{
+            progressDoalog.cancel();
             binding.textView4.setText("Your ride is on the way");
             binding.myLocationButton.setVisibility(View.VISIBLE);
             binding.driverSheet.mainDriverDetail.setVisibility(View.VISIBLE);
