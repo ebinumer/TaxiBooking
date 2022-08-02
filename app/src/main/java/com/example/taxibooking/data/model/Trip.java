@@ -21,7 +21,7 @@ public class Trip {
         this.username = username;
         this.phone = phone;
         this.amount = amount;
-        this.distance = distance
+        this.distance = distance;
         this.pickUp = pickUp;
         this.pickUpLat =pickUpLat;
         this.pickUpLong = pickUpLong;
