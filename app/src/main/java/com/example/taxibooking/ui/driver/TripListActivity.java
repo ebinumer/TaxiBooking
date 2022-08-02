@@ -2,6 +2,7 @@ package com.example.taxibooking.ui.driver;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -38,6 +39,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -232,28 +234,39 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
     @Override
     public void onItemClick(Integer position) {
-        sessionManager.setMyLat(tripList.get(position).getPickUpLat());
-        sessionManager.setMyLang(tripList.get(position).getPickUpLong());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(TripListActivity.this);
+        builder.setTitle("Trip Confirmation");
+        builder.setMessage("Are you sure to pick this trip?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                sessionManager.setMyLat(tripList.get(position).getPickUpLat());
+                sessionManager.setMyLang(tripList.get(position).getPickUpLong());
 
-        sessionManager.setDestinationLat(tripList.get(position).getDestinationLat());
-        sessionManager.setDestinationLang(tripList.get(position).getDestinationLong());
-        sessionManager.setOrderId(tripList.get(position).getId());
+                sessionManager.setDestinationLat(tripList.get(position).getDestinationLat());
+                sessionManager.setDestinationLang(tripList.get(position).getDestinationLong());
+                sessionManager.setOrderId(tripList.get(position).getId());
 
-        Trip tripData = tripList.get(position);
-        Log.d(TAG, tripData.toString());
-        Driver updatedDriverData = new Driver(
-                "Driver",
-                "123456",
-                String.valueOf(currentLatLng.latitude),
-                String.valueOf(currentLatLng.longitude),
-                tripData.getUsername(),
-                tripData.getId()
-        );
-        Log.d(TAG, updatedDriverData.toString());
-        updateDataToDb(updatedDriverData,position);
-
-
-
+                Trip tripData = tripList.get(position);
+                Log.d(TAG, tripData.toString());
+                Driver updatedDriverData = new Driver(
+                        "Driver",
+                        "123456",
+                        String.valueOf(currentLatLng.latitude),
+                        String.valueOf(currentLatLng.longitude),
+                        tripData.getUsername(),
+                        tripData.getId()
+                );
+                Log.d(TAG, updatedDriverData.toString());
+                updateDataToDb(updatedDriverData,position);
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        }).show();
     }
 
     private void updateDataToDb(Driver driverData, Integer position) {
