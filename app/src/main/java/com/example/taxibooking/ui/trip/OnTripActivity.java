@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
+import com.example.taxibooking.data.model.Driver;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityOnTripBinding;
 import com.example.taxibooking.databinding.ActivityTripListBinding;
@@ -50,11 +51,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     private ActivityOnTripBinding binding;
@@ -80,6 +84,8 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     LatLng customerLocation;
     LatLng customerDestination;
     private FirebaseFirestore fb;
+    private DatabaseReference mDatabase = getDatabaseReferenceInstance();
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +104,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
 
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         statusOfGPS = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
+         reference = mDatabase.child("driver");
         customerLocation = new LatLng(Double.parseDouble(sessionManager.getMyLat()), Double.parseDouble(sessionManager.getMyLang()));
         customerDestination = new LatLng(Double.parseDouble(sessionManager.getDestinationLat()), Double.parseDouble(sessionManager.getDestinationLang()));
         locationUtil.getLocationFromLatLong(customerLocation);
@@ -264,7 +270,24 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                             Location lastKnownLocation = task.getResult();
                             if (lastKnownLocation != null) {
                                 currentLatLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                               /* Driver driverData = new Driver();
+                                driverData.setLatitude(String.valueOf(lastKnownLocation.getLatitude()));
+                                driverData.setLongitude(String.valueOf(lastKnownLocation.getLongitude()));*/
+                                Map<String,Object> driverMap = new HashMap<>();
+                                driverMap.put("latitude",String.valueOf(lastKnownLocation.getLatitude()));
+                                driverMap.put("longitude",String.valueOf(lastKnownLocation.getLongitude()));
+                                reference.child("driver1").updateChildren(driverMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
 
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
                             }
                         } else {
 

@@ -84,8 +84,8 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
     private void observeMarker(Driver driver) {
-
-        if(Objects.equals(driver.customer_name,sessionManager.getUserName() )){
+Log.e("u id","= "+sessionManager.getOrderId());
+        if(!Objects.equals(driver.order_id, sessionManager.getOrderId())){
 
             progressDoalog = new ProgressDialog(TripActivity.this);
             progressDoalog.setMax(100);
@@ -101,7 +101,9 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
 
             getDeviceLocation();
         } else{
-            progressDoalog.cancel();
+            if (progressDoalog != null) {
+                progressDoalog.cancel();
+            }
             binding.textView4.setText("Your ride is on the way");
             binding.myLocationButton.setVisibility(View.VISIBLE);
             binding.driverSheet.mainDriverDetail.setVisibility(View.VISIBLE);
