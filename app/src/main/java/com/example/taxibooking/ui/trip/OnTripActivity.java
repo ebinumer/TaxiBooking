@@ -276,6 +276,8 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                                 Map<String,Object> driverMap = new HashMap<>();
                                 driverMap.put("latitude",String.valueOf(lastKnownLocation.getLatitude()));
                                 driverMap.put("longitude",String.valueOf(lastKnownLocation.getLongitude()));
+                                driverMap.put("order_id",sessionManager.getOrderId());
+                                driverMap.put("customer_name",sessionManager.getUserName());
                                 reference.child("driver1").updateChildren(driverMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
