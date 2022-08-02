@@ -1,8 +1,5 @@
 package com.example.taxibooking.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,13 +9,8 @@ import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityPaymentBinding;
-import com.example.taxibooking.ui.auth.SignUpActivity;
-import com.example.taxibooking.ui.home.HomeActivity;
 import com.example.taxibooking.ui.trip.TripActivity;
 import com.example.taxibooking.utils.NetworkManager;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -27,7 +19,7 @@ import java.util.Map;
 public class PaymentActivity extends BaseActivity {
     private ActivityPaymentBinding binding;
     private String type;
-    String checkIn, checkOut, total,image,location,name;
+    String checkIn, checkOut, total,image,location,name,Distence,Price;
     int adult, children, room;
     private SessionManager sessionManager;
 
@@ -41,6 +33,12 @@ public class PaymentActivity extends BaseActivity {
     }
 
     private void initView() {
+
+         Distence = getIntent().getStringExtra("Distence");
+         Price = getIntent().getStringExtra("price");
+
+         binding.tvDistance.setText(Distence+ " Km");
+         binding.tvPound.setText(Price+ " £");
 
         binding.radioDebit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -73,7 +71,25 @@ public class PaymentActivity extends BaseActivity {
                         if (!binding.etCvv.getText().toString().isEmpty()) {
                             type = "card";
                             if (NetworkManager.isNetworkAvailable(PaymentActivity.this)) {
-                                goToOrderSuccess();
+                                Map<String, Object> trip = new HashMap<>();
+                                trip.put("current_lat", sessionManager.getMyLat());
+                                trip.put("current_long", sessionManager.getMyLang());
+                                trip.put("destination_lat", sessionManager.getDestinationLat());
+                                trip.put("destination_long", sessionManager.getDestinationLang());
+                                trip.put("username", sessionManager.getUserName());
+                                trip.put("mobile", sessionManager.getMobile());
+                                trip.put("Charge", sessionManager.getMobile());
+                                trip.put("order_status", "waiting");
+                                trip.put("price", Price);
+                                trip.put("distance", Distence);
+
+                                FirebaseFirestore fireStoreInstance = getFireStoreInstance();
+                                fireStoreInstance.collection("Trip")
+                                        .add(trip)
+                                        .addOnSuccessListener(documentReference ->  goToOrderSuccess(documentReference.getId())).addOnFailureListener(e -> {
+                                            hideLoading();
+                                            showToast(PaymentActivity.this, getString(R.string.error));
+                                        });
                             } else {
                                 binding.containerNoInternet.setVisibility(View.VISIBLE);
                             }
@@ -97,22 +113,17 @@ public class PaymentActivity extends BaseActivity {
                     trip.put("destination_long", sessionManager.getDestinationLang());
                     trip.put("username", sessionManager.getUserName());
                     trip.put("mobile", sessionManager.getMobile());
+                    trip.put("Charge", sessionManager.getMobile());
                     trip.put("order_status", "waiting");
+                    trip.put("price", Price);
+                    trip.put("distance", Distence);
 
                     FirebaseFirestore fireStoreInstance = getFireStoreInstance();
                     fireStoreInstance.collection("Trip")
                             .add(trip)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    goToOrderSuccess();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    hideLoading();
-                                    showToast(PaymentActivity.this, getString(R.string.error));
-                                }
+                            .addOnSuccessListener(documentReference ->  goToOrderSuccess(documentReference.getId())).addOnFailureListener(e -> {
+                                hideLoading();
+                                showToast(PaymentActivity.this, getString(R.string.error));
                             });
 //                    goToOrderSuccess();
                 } else {
@@ -122,8 +133,9 @@ public class PaymentActivity extends BaseActivity {
         });
     }
 
-    private void goToOrderSuccess() {
+    private void goToOrderSuccess(String id) {
         sessionManager.setReqTrip(true);
+        sessionManager.setOrderId(id);
         Intent intent = new Intent(this, TripActivity.class);
         intent.putExtra("checkIn", checkIn);
         intent.putExtra("checkOut", checkOut);

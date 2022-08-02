@@ -19,14 +19,12 @@
         android:theme="@style/Theme.TaxiBooking"
         tools:targetApi="31">
         <activity
-            android:name=".ui.trip.TripCompleteActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.trip.OnTripActivity"
             android:exported="false" />
         <activity
             android:name=".ui.driver.TripListActivity"
-            android:exported="false" />
+            android:exported="false">
+        </activity>
         <activity
             android:name=".ui.PaymentActivity"
             android:exported="false" />
@@ -53,7 +51,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.SplashActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
@@ -79,6 +80,14 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
             Intent intent = new Intent(TripListActivity.this, LoginActivity.class);
             startActivity(intent);
             finishAffinity();
+        });
+
+        binding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getTrips();
+                binding.swipeRefresh.setRefreshing(false);
+            }
         });
     }
 
@@ -188,17 +197,17 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                                                     Double.valueOf(documentSnapshot.get("destination_lat").toString()),
                                                     Double.valueOf(documentSnapshot.get("destination_long").toString())));
 
-                                  /*  if(!documentSnapshot.get("status").toString().equals("Completed")){*/
+                                    if(!documentSnapshot.get("order_status").toString().equals("Completed")){
                                     tripList.add(
                                             new Trip(
                                                     documentSnapshot.getId(),
                                                     documentSnapshot.get("username").toString(),
                                                     documentSnapshot.get("mobile").toString(),
-                                                    "100", pickUp.getLocality(),documentSnapshot.get("current_lat").toString(),documentSnapshot.get("current_long").toString(),
+                                                    documentSnapshot.get("price").toString(),documentSnapshot.get("distance").toString(), pickUp.getLocality(),documentSnapshot.get("current_lat").toString(),documentSnapshot.get("current_long").toString(),
                                                     dest.getLocality(),documentSnapshot.get("destination_lat").toString(),documentSnapshot.get("destination_long").toString()
                                             ));
 
-                                /**/} }
+                                }}
                                 hideLoading();
                                 if (tripList.size() > 0) {
                                     binding.rvTrips.setVisibility(View.VISIBLE);
@@ -208,6 +217,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                                     showToast(TripListActivity.this, getString(R.string.no_order));
                                 }
                             }
+                        }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -236,7 +246,8 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                 "123456",
                 String.valueOf(currentLatLng.latitude),
                 String.valueOf(currentLatLng.longitude),
-                tripData.getUsername()
+                tripData.getUsername(),
+                tripData.getId()
         );
         Log.d(TAG, updatedDriverData.toString());
         updateDataToDb(updatedDriverData,position);
@@ -266,7 +277,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
         fb.collection("Trip")
                 .document(sessionManager.getOrderId())
-                .update("status", "Picked")
+                .update("order_status", "Picked")
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -281,5 +292,11 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getTrips();
     }
 }
