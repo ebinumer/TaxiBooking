@@ -102,17 +102,9 @@ public class PaymentActivity extends BaseActivity {
                     FirebaseFirestore fireStoreInstance = getFireStoreInstance();
                     fireStoreInstance.collection("Trip")
                             .add(trip)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    goToOrderSuccess();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    hideLoading();
-                                    showToast(PaymentActivity.this, getString(R.string.error));
-                                }
+                            .addOnSuccessListener(documentReference -> goToOrderSuccess()).addOnFailureListener(e -> {
+                                hideLoading();
+                                showToast(PaymentActivity.this, getString(R.string.error));
                             });
 //                    goToOrderSuccess();
                 } else {

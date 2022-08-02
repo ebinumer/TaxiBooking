@@ -188,7 +188,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                                                     Double.valueOf(documentSnapshot.get("destination_lat").toString()),
                                                     Double.valueOf(documentSnapshot.get("destination_long").toString())));
 
-                                    if(!documentSnapshot.get("status").toString().equals("Completed")){
+                                    if(!documentSnapshot.get("order_status").toString().equals("Completed")){
                                     tripList.add(
                                             new Trip(
                                                     documentSnapshot.getId(),

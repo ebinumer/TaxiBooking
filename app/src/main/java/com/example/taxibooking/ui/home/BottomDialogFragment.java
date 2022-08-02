@@ -56,7 +56,7 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
         distanceText.setText(df.format(distance / 1000) + " Km");
         Double Km = Double.valueOf(df.format(distance / 1000));
 
-        priceText.setText(Km * 3 + " €");
+        priceText.setText(Km * 3 + " £");
         calculateFare();
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override

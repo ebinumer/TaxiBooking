@@ -245,7 +245,7 @@
                     android:layout_height="32dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_baseline_attach_money_24" />
+                    android:src="@drawable/ic_pound" />
             </LinearLayout>
 
         </LinearLayout>
