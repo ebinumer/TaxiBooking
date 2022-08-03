@@ -10,7 +10,6 @@ import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -56,7 +55,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     private ActivityOnTripBinding binding;
@@ -147,6 +145,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                             @Override
                             public void onSuccess(Void unused) {
                                 sessionManager.setDriverStatus("Started");
+                                sessionManager.setTripStatus("Started");
                                 binding.startLayout.setVisibility(View.GONE);
                                 binding.endLayout.setVisibility(View.VISIBLE);
                             }
@@ -163,24 +162,20 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
         binding.endTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sessionManager.setTripStatus("completed");
                 fb.collection("Trip")
                         .document(sessionManager.getOrderId())
                         .update("order_status", "Completed")
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                sessionManager.setDriverStatus("no_selected");
-                                Intent intent = new Intent(OnTripActivity.this, TripListActivity.class);
-                                startActivity(intent);
-                                finishAffinity();
+                                updateRealTimeDb();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
-                            public void onFailure(@NonNull Exception e) {
-
-
-                            }
+                            public void onFailure(@NonNull Exception e) {}
                         });
+
             }
         });
 
@@ -200,7 +195,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                         double wayLongitude = location.getLongitude();
                         currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                         // showToast(OnTripActivity.this, "new lat and long" + wayLatitude + wayLongitude);
-                        Map<String, Object> driverMap = new HashMap<>();
+                       /* Map<String, Object> driverMap = new HashMap<>();
                         driverMap.put("latitude", String.valueOf(wayLatitude));
                         driverMap.put("longitude", String.valueOf(wayLongitude));
                         driverMap.put("order_id", sessionManager.getOrderId());
@@ -218,7 +213,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                                     public void onFailure(@NonNull Exception e) {
 
                                     }
-                                });
+                                });*/
                     }
                 }
                 super.onLocationResult(locationResult);
@@ -234,6 +229,33 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
         }).start();*/
         Intent i = new Intent(OnTripActivity.this, LocationService.class);
         ContextCompat.startForegroundService(OnTripActivity.this, i);
+    }
+
+    private void updateRealTimeDb() {
+        stopService(new Intent(OnTripActivity.this,LocationService.class));
+        Map<String, Object> driverMap = new HashMap<>();
+                        driverMap.put("latitude", "0.0");
+                        driverMap.put("longitude", "0.0");
+                        driverMap.put("order_id", "");
+                        driverMap.put("customer_name", sessionManager.getUserName());
+                        driverMap.put("user_name", "driver");
+                        driverMap.put("trip_status", "completed");
+                        driverMap.put("phone", "123456");
+                        reference.child("driver1").updateChildren(driverMap)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        sessionManager.setDriverStatus("no_selected");
+                                        Intent intent = new Intent(OnTripActivity.this, TripCompleteActivity.class);
+                                        startActivity(intent);
+                                        finishAffinity();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                    }
+                                });
     }
 
 

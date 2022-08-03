@@ -255,7 +255,8 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                         String.valueOf(currentLatLng.latitude),
                         String.valueOf(currentLatLng.longitude),
                         tripData.getUsername(),
-                        tripData.getId()
+                        tripData.getId(),
+                        "pick"
                 );
                 Log.d(TAG, updatedDriverData.toString());
                 updateDataToDb(updatedDriverData,position);

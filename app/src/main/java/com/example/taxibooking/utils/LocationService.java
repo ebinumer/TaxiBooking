@@ -8,13 +8,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ServiceInfo;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,7 +45,8 @@ public class LocationService extends Service {
     private DatabaseReference mDatabase;
     DatabaseReference reference;
 
-    public LocationService() {}
+    public LocationService() {
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -99,17 +98,18 @@ public class LocationService extends Service {
                         driverMap.put("order_id", sessionManager.getOrderId());
                         driverMap.put("customer_name", sessionManager.getUserName());
                         driverMap.put("user_name", "driver");
+                        driverMap.put("trip_status", sessionManager.getTripStatus());
                         driverMap.put("phone", "123456");
                         reference.child("driver1").updateChildren(driverMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                       // Toast.makeText(LocationService.this, "Success", Toast.LENGTH_SHORT).show();
+                                        // Toast.makeText(LocationService.this, "Success", Toast.LENGTH_SHORT).show();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                      //  Toast.makeText(LocationService.this, "Failed", Toast.LENGTH_SHORT).show();
+                                        //  Toast.makeText(LocationService.this, "Failed", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
@@ -133,7 +133,7 @@ public class LocationService extends Service {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void runForeground(){
+    private void runForeground() {
 //... Pending intent if you want attach it to the notification
         NotificationChannel chan = new NotificationChannel(
                 "100",
@@ -146,7 +146,7 @@ public class LocationService extends Service {
         assert manager != null;
         manager.createNotificationChannel(chan);
 
-        Notification notification=new NotificationCompat.Builder(this,"100")
+        Notification notification = new NotificationCompat.Builder(this, "100")
                 .setSmallIcon(R.drawable.car_icon)
                 .setContentText(getString(R.string.app_name))
                 .build();
