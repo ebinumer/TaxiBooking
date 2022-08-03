@@ -30,6 +30,8 @@ public class SessionManager {
     private static final String ORDER_ID = "order_id";
     private static final String IS_DRIVER = "is_driver";
     private static final String DRIVER_STATUS = "driver_status";
+    private static final String Price = "price";
+    private static final String Distance = "distance";
 
 
     public SessionManager(Context context) {
@@ -53,6 +55,15 @@ public class SessionManager {
         editor.putString(USERNAME, name);
         editor.apply();
     }
+    public void setPrice(String price) {
+        editor.putString(Price, price);
+        editor.apply();
+    }
+    public void setDistance(String distance) {
+        editor.putString(Distance, distance);
+        editor.apply();
+    }
+
    public void setDriverStatus(String name) {
         editor.putString(DRIVER_STATUS, name);
         editor.apply();
@@ -170,6 +181,12 @@ public class SessionManager {
     }
     public String getDriverLong() {
         return shpref.getString(DRIVER_LONG, "");
+    }
+    public String getDistance() {
+        return shpref.getString(Distance, "");
+    }
+    public String getPrice() {
+        return shpref.getString(Price, "");
     }
 
     public String getDriverStatus() {

@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,8 @@ import com.example.taxibooking.R;
 import com.example.taxibooking.data.model.Driver;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityTripBinding;
+import com.example.taxibooking.ui.auth.LoginActivity;
+import com.example.taxibooking.ui.home.HomeActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,6 +51,7 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     private final float DEFAULT_ZOOM = 15.0f;
     private FusedLocationProviderClient fusedLocationProviderClient;
     ProgressDialog progressDoalog;
+    Boolean FirstTime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,36 +88,41 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
     private void observeMarker(Driver driver) {
-Log.e("u id","= "+sessionManager.getOrderId());
-        if(!Objects.equals(driver.order_id, sessionManager.getOrderId())){
+        Log.e("u id", "= " + sessionManager.getOrderId());
+        if (!Objects.equals(driver.order_id, sessionManager.getOrderId())) {
+            if (FirstTime) {
+                progressDoalog = new ProgressDialog(TripActivity.this);
+                progressDoalog.setMax(100);
+                progressDoalog.setMessage("Waiting for Driver....");
+                progressDoalog.setTitle("Waiting for Driver to pick up this order...");
+                progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDoalog.show();
 
-            progressDoalog = new ProgressDialog(TripActivity.this);
-            progressDoalog.setMax(100);
-            progressDoalog.setMessage("Waiting for Driver....");
-            progressDoalog.setTitle("Waiting for Driver to pick up this order...");
-            progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDoalog.show();
+                binding.textView4.setText("Waiting for a driver....");
+                binding.myLocationButton.setVisibility(View.GONE);
+                binding.driverSheet.mainDriverDetail.setVisibility(View.GONE);
+                mMap.clear();
 
-            binding.textView4.setText("Waiting for a driver....");
-            binding.myLocationButton.setVisibility(View.GONE);
-            binding.driverSheet.mainDriverDetail.setVisibility(View.GONE);
-            mMap.clear();
-
-            getDeviceLocation();
-        } else{
+                getDeviceLocation();
+                FirstTime = false;
+            } else {
+                Intent intent = new Intent(TripActivity.this, TripActivity.class);
+                startActivity(intent);
+            }
+        } else {
             if (progressDoalog != null) {
                 progressDoalog.cancel();
             }
             binding.textView4.setText("Your ride is on the way");
             binding.myLocationButton.setVisibility(View.VISIBLE);
             binding.driverSheet.mainDriverDetail.setVisibility(View.VISIBLE);
-        if (carMarker != null)
-            carMarker.remove();
+            if (carMarker != null)
+                carMarker.remove();
 
-        LatLng carLatLng = new LatLng(Double.valueOf(driver.latitude), Double.valueOf(driver.longitude));
-        carMarker = mMap.addMarker(new MarkerOptions().position(carLatLng).draggable(false).icon(BitmapDescriptorFactory.fromBitmap(mapBitmapIcon())));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(carLatLng, DEFAULT_ZOOM));
-    }
+            LatLng carLatLng = new LatLng(Double.valueOf(driver.latitude), Double.valueOf(driver.longitude));
+            carMarker = mMap.addMarker(new MarkerOptions().position(carLatLng).draggable(false).icon(BitmapDescriptorFactory.fromBitmap(mapBitmapIcon())));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(carLatLng, DEFAULT_ZOOM));
+        }
     }
 
     private void initView() {
@@ -134,7 +143,8 @@ Log.e("u id","= "+sessionManager.getOrderId());
             public void onClick(View view) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 callIntent.setData(Uri.parse("tel:000000000"));
-            }});
+            }
+        });
 
     }
 
