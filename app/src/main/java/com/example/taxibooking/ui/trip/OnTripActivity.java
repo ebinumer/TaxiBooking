@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityOnTripBinding;
 import com.example.taxibooking.ui.driver.TripListActivity;
+import com.example.taxibooking.utils.LocationService;
 import com.example.taxibooking.utils.LocationUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -54,6 +56,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     private ActivityOnTripBinding binding;
@@ -74,6 +77,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     double distance, fare;
     private FusedLocationProviderClient fusedLocationProviderClient;
     LocationManager manager;
+    Thread locationThread;
     boolean statusOfGPS;
     private SessionManager sessionManager;
     LatLng customerLocation;
@@ -95,7 +99,6 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
         getLocationPermission();
         fb = getFireStoreInstance();
-
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         statusOfGPS = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         reference = mDatabase.child("driver");
@@ -126,7 +129,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
         binding.destinationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // getDeviceLocation();
+                // getDeviceLocation();
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                         Uri.parse("http://maps.google.com/maps?saddr=" + currentLatLng.latitude + "," + currentLatLng.longitude +
                                 "&daddr=" + sessionManager.getDestinationLat() + "," + sessionManager.getDestinationLang()));
@@ -195,7 +198,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                     if (location != null) {
                         double wayLatitude = location.getLatitude();
                         double wayLongitude = location.getLongitude();
-                        currentLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+                        currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                         // showToast(OnTripActivity.this, "new lat and long" + wayLatitude + wayLongitude);
                         Map<String, Object> driverMap = new HashMap<>();
                         driverMap.put("latitude", String.valueOf(wayLatitude));
@@ -221,6 +224,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                 super.onLocationResult(locationResult);
             }
         };
+      //  startService(new Intent(this, LocationService.class));
     }
 
 
@@ -255,6 +259,8 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
 
         ) {
             locationPermissionGranted = true;
+            //ContextCompat.startForegroundService(this, new Intent(this, LocationService.class));
+            startService(new Intent(this, LocationService.class));
             getDeviceLocation();
 
         } else {
@@ -316,7 +322,20 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
 
     @Override
     protected void onPause() {
-        getDeviceLocation();
+        Log.e("Lifecycle", "onPause: ");
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.e("Lifecycle", "onStop: ");
+       startService(new Intent(this, LocationService.class));
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        startService(new Intent(this, LocationService.class));
+        super.onDestroy();
     }
 }
