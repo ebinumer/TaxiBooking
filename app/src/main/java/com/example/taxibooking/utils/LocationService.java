@@ -8,13 +8,17 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
@@ -45,6 +49,7 @@ public class LocationService extends Service {
 
     public LocationService() {}
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         this.sessionManager = new SessionManager(this);
@@ -54,11 +59,14 @@ public class LocationService extends Service {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1500);
+        runForeground();
         super.onCreate();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        runForeground();
         startLocationService();
         return START_STICKY;
     }
@@ -96,12 +104,12 @@ public class LocationService extends Service {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                        Toast.makeText(LocationService.this, "Success", Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(LocationService.this, "Success", Toast.LENGTH_SHORT).show();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(LocationService.this, "Failed", Toast.LENGTH_SHORT).show();
+                                      //  Toast.makeText(LocationService.this, "Failed", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
@@ -111,16 +119,39 @@ public class LocationService extends Service {
         }, Looper.myLooper());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onDestroy() {
+    public void onTaskRemoved(Intent rootIntent) {
         startLocationService();
-        super.onDestroy();
+        super.onTaskRemoved(rootIntent);
     }
-
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void runForeground(){
+//... Pending intent if you want attach it to the notification
+        NotificationChannel chan = new NotificationChannel(
+                "100",
+                "My Foreground Service",
+                NotificationManager.IMPORTANCE_LOW);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
+
+        Notification notification=new NotificationCompat.Builder(this,"100")
+                .setSmallIcon(R.drawable.car_icon)
+                .setContentText(getString(R.string.app_name))
+                .build();
+
+        startForeground(1, notification);
+
     }
 }
