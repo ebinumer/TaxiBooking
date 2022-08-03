@@ -110,17 +110,19 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
                 progressDoalog.cancel();
             }
 
-            if (!Objects.equals(driver.trip_status, "Started")) {
+            if (!Objects.equals(driver.trip_status, "pick")) {
                 binding.textView4.setText("Your ride is on the way");
             }
+            else if (!Objects.equals(driver.trip_status, "Started")) {
+                binding.textView4.setText("Enjoy the trip,Lets move");
+            }
+
             else if(!Objects.equals(driver.trip_status, "completed")) {
                 Intent intent = new Intent(TripActivity.this, TripCompleteActivity.class);
                 startActivity(intent);
                 finishAffinity();
             }
-            else{
-                binding.textView4.setText("Enjoy the trip,Lets move");
-            }
+
             binding.myLocationButton.setVisibility(View.VISIBLE);
             binding.driverSheet.mainDriverDetail.setVisibility(View.VISIBLE);
             if (carMarker != null)
