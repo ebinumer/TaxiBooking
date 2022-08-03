@@ -62,7 +62,7 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View view) {
                 if (Km >= 100) {
-                    Toast.makeText(requireContext(), "Can't request a trip, Your Distance is Above 100 km", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Can't request a trip, Your Distance is Above 62 mile", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent i;
                     i = new Intent(requireContext(), PaymentActivity.class);

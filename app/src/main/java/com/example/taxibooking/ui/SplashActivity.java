@@ -11,7 +11,7 @@ import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.ui.auth.LoginActivity;
 import com.example.taxibooking.ui.driver.TripListActivity;
 import com.example.taxibooking.ui.home.HomeActivity;
-import com.example.taxibooking.ui.trip.OnTripActivity;
+import com.example.taxibooking.ui.driver.OnTripActivity;
 import com.example.taxibooking.ui.trip.TripActivity;
 
 import java.util.Objects;

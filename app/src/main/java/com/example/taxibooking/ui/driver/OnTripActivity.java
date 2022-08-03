@@ -1,4 +1,4 @@
-package com.example.taxibooking.ui.trip;
+package com.example.taxibooking.ui.driver;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -23,7 +23,7 @@ import com.example.taxibooking.BaseActivity;
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityOnTripBinding;
-import com.example.taxibooking.ui.driver.TripListActivity;
+import com.example.taxibooking.ui.trip.TripCompleteActivity;
 import com.example.taxibooking.utils.LocationService;
 import com.example.taxibooking.utils.LocationUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -138,6 +138,8 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
         binding.strtTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                stopService(new Intent(OnTripActivity.this,LocationService.class));
+                sessionManager.setTripStatus("Started");
                 fb.collection("Trip")
                         .document(sessionManager.getOrderId())
                         .update("order_status", "Started")
@@ -145,7 +147,6 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                             @Override
                             public void onSuccess(Void unused) {
                                 sessionManager.setDriverStatus("Started");
-                                sessionManager.setTripStatus("Started");
                                 binding.startLayout.setVisibility(View.GONE);
                                 binding.endLayout.setVisibility(View.VISIBLE);
                             }
@@ -175,7 +176,6 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                             @Override
                             public void onFailure(@NonNull Exception e) {}
                         });
-
             }
         });
 
@@ -232,7 +232,6 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
     private void updateRealTimeDb() {
-        stopService(new Intent(OnTripActivity.this,LocationService.class));
         Map<String, Object> driverMap = new HashMap<>();
                         driverMap.put("latitude", "0.0");
                         driverMap.put("longitude", "0.0");

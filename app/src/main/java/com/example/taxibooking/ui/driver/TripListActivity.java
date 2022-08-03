@@ -10,7 +10,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -27,8 +26,6 @@ import com.example.taxibooking.data.model.Trip;
 import com.example.taxibooking.data.prefrence.SessionManager;
 import com.example.taxibooking.databinding.ActivityTripListBinding;
 import com.example.taxibooking.ui.auth.LoginActivity;
-import com.example.taxibooking.ui.home.HomeActivity;
-import com.example.taxibooking.ui.trip.OnTripActivity;
 import com.example.taxibooking.utils.LocationUtil;
 import com.example.taxibooking.utils.NetworkManager;
 import com.example.taxibooking.utils.OnItemClickListener;
@@ -249,6 +246,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                 sessionManager.setDestinationLat(tripList.get(position).getDestinationLat());
                 sessionManager.setDestinationLang(tripList.get(position).getDestinationLong());
                 sessionManager.setOrderId(tripList.get(position).getId());
+                sessionManager.setTripStatus("pick");
 
                 Trip tripData = tripList.get(position);
                 Log.d(TAG, tripData.toString());

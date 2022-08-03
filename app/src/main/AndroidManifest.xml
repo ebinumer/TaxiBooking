@@ -33,7 +33,7 @@
             android:name=".ui.trip.TripCompleteActivity"
             android:exported="false" />
     <activity
-            android:name=".ui.trip.OnTripActivity"
+            android:name=".ui.driver.OnTripActivity"
             android:exported="false" />
         <activity
             android:name=".ui.driver.TripListActivity"

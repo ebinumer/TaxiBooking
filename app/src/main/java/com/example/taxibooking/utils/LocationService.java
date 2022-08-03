@@ -67,7 +67,7 @@ public class LocationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         runForeground();
         startLocationService();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void startLocationService() {
@@ -93,8 +93,13 @@ public class LocationService extends Service {
                         LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                         // showToast(OnTripActivity.this, "new lat and long" + wayLatitude + wayLongitude);
                         Map<String, Object> driverMap = new HashMap<>();
-                        driverMap.put("latitude", String.valueOf(wayLatitude));
-                        driverMap.put("longitude", String.valueOf(wayLongitude));
+                        if (sessionManager.getTripStatus().equals("completed")) {
+                            driverMap.put("latitude", "0.0");
+                            driverMap.put("longitude", "0.0");
+                        } else {
+                            driverMap.put("latitude", String.valueOf(wayLatitude));
+                            driverMap.put("longitude", String.valueOf(wayLongitude));
+                        }
                         driverMap.put("order_id", sessionManager.getOrderId());
                         driverMap.put("customer_name", sessionManager.getUserName());
                         driverMap.put("user_name", "driver");
@@ -122,8 +127,14 @@ public class LocationService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        startLocationService();
+        //   startLocationService();
         super.onTaskRemoved(rootIntent);
+    }
+
+    @Override
+    public void onDestroy() {
+        stopSelf();
+        super.onDestroy();
     }
 
     @Nullable
