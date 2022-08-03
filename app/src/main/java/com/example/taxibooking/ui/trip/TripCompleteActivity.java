@@ -38,6 +38,7 @@ public class TripCompleteActivity extends AppCompatActivity {
                             TripListActivity.class);
                     startActivity(i);
                 } else {
+                    sessionManager.setReqTrip(false);
                     Intent i;
                     i = new Intent(TripCompleteActivity.this,
                             HomeActivity.class);

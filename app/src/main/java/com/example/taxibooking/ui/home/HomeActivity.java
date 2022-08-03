@@ -331,7 +331,9 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
                                 if (lastKnownLocation != null) {
                                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                             currentLatLng, DEFAULT_ZOOM));
-                                    setupPickupLocation(currentLatLng);
+                                    if(currentLatLng.latitude != 0.0) {
+                                        setupPickupLocation(currentLatLng);
+                                    }
                                 }
                             } else {
                                 Log.d(TAG, "Current location is null. Using defaults.");

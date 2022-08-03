@@ -90,7 +90,6 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
     private void observeMarker(Driver driver) {
         Log.e("u id", "= " + sessionManager.getOrderId());
         if (!Objects.equals(driver.order_id, sessionManager.getOrderId())) {
-            if (FirstTime) {
                 progressDoalog = new ProgressDialog(TripActivity.this);
                 progressDoalog.setMax(100);
                 progressDoalog.setMessage("Waiting for Driver....");
@@ -104,16 +103,24 @@ public class TripActivity extends BaseActivity implements OnMapReadyCallback {
                 mMap.clear();
 
                 getDeviceLocation();
-                FirstTime = false;
-            } else {
-                Intent intent = new Intent(TripActivity.this, TripActivity.class);
-                startActivity(intent);
-            }
+
+
         } else {
             if (progressDoalog != null) {
                 progressDoalog.cancel();
             }
-            binding.textView4.setText("Your ride is on the way");
+
+            if (!Objects.equals(driver.trip_status, "Started")) {
+                binding.textView4.setText("Your ride is on the way");
+            }
+            else if(!Objects.equals(driver.trip_status, "completed")) {
+                Intent intent = new Intent(TripActivity.this, TripCompleteActivity.class);
+                startActivity(intent);
+                finishAffinity();
+            }
+            else{
+                binding.textView4.setText("Enjoy the trip,Lets move");
+            }
             binding.myLocationButton.setVisibility(View.VISIBLE);
             binding.driverSheet.mainDriverDetail.setVisibility(View.VISIBLE);
             if (carMarker != null)
