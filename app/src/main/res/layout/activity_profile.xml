@@ -132,25 +132,6 @@
                     android:layout_gravity="top"
                     android:layout_marginTop="16dp"
                     android:gravity="center|start"
-                    android:text="Address"
-                    android:textColor="@color/black"
-                    android:textSize="13sp" />
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:enabled="false"
-                    android:hint="Address"
-                    tools:text="asample@house" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center|start"
                     android:text="Mobile"
                     android:textColor="@color/black"
                     android:textSize="13sp" />

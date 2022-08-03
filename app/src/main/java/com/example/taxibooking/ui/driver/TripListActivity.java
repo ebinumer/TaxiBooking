@@ -177,6 +177,7 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
 
     private void getTrips() {
         showLoading(this);
+        binding.ivNoTrip.setVisibility(View.GONE);
         if (NetworkManager.isNetworkAvailable(TripListActivity.this)) {
             if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
             }
@@ -213,9 +214,11 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
                                 hideLoading();
                                 if (tripList.size() > 0) {
                                     binding.rvTrips.setVisibility(View.VISIBLE);
+                                    binding.ivNoTrip.setVisibility(View.GONE);
                                     adapter.notifyDataSetChanged();
                                 } else {
                                     binding.rvTrips.setVisibility(View.GONE);
+                                    binding.ivNoTrip.setVisibility(View.VISIBLE);
                                     showToast(TripListActivity.this, getString(R.string.no_order));
                                 }
                             }
