@@ -29,7 +29,9 @@
             android:foregroundServiceType="location"
            />
 
-
+        <activity
+            android:name=".ui.trip.TripCompleteActivity"
+            android:exported="false" />
     <activity
             android:name=".ui.trip.OnTripActivity"
             android:exported="false" />
