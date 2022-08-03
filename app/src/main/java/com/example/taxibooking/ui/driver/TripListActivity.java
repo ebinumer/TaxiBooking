@@ -238,6 +238,9 @@ public class TripListActivity extends BaseActivity implements OnItemClickListene
         sessionManager.setDestinationLat(tripList.get(position).getDestinationLat());
         sessionManager.setDestinationLang(tripList.get(position).getDestinationLong());
         sessionManager.setOrderId(tripList.get(position).getId());
+        sessionManager.setPrice(tripList.get(position).amount);
+        sessionManager.setDistance(tripList.get(position).distance);
+
 
         Trip tripData = tripList.get(position);
         Log.d(TAG, tripData.toString());
