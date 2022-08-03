@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
@@ -18,7 +20,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TaxiBooking"
         tools:targetApi="31">
-        <activity
+
+        <service
+            android:name=".utils.LocationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location"
+           />
+
+    <activity
             android:name=".ui.trip.OnTripActivity"
             android:exported="false" />
         <activity

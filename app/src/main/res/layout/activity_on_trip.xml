@@ -197,7 +197,7 @@
                 android:visibility="gone"
                 android:weightSum="2">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_customerl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -205,13 +205,13 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
                     android:layout_weight="1"
-                    android:background="@color/purple_700"
+                    android:backgroundTint="@color/app_yellow"
                     android:text="Go to Customer Location"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/strt_trip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -219,9 +219,9 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
                     android:layout_weight="1"
-                    android:background="@color/purple_700"
+                    android:backgroundTint="@color/app_yellow"
                     android:text="Start Trip"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -235,7 +235,7 @@
                 android:visibility="gone"
                 android:weightSum="2">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/destination_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -243,13 +243,13 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
                     android:layout_weight="1"
-                    android:background="@color/purple_700"
+                    android:backgroundTint="@color/app_yellow"
                     android:text="Destination Location"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/end_trip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -257,9 +257,9 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
                     android:layout_weight="1"
-                    android:background="@color/purple_700"
+                    android:backgroundTint="@color/app_yellow"
                     android:text="End Trip"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
