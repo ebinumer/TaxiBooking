@@ -4,22 +4,26 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
+import com.example.taxibooking.ui.SplashActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -57,10 +61,30 @@ public class LocationService extends Service {
         super.onCreate();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startLocationService();
-        return START_STICKY;
+//        startLocationService();
+//        return START_STICKY;
+        // Tapping the notification will open the specified Activity.
+        Intent activityIntent = new Intent(this, SplashActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationChannel chan = new NotificationChannel(
+                "MyChannelId",
+                "My Foreground Service",
+                NotificationManager.IMPORTANCE_LOW);
+        // This always shows up in the notifications area when this Service is running.
+        // TODO: String localization
+        Notification not = new Notification.Builder(this, "MyChannelId").
+                setContentTitle(getText(R.string.app_name)).
+                setContentInfo("Doing stuff in the background...").setSmallIcon(R.mipmap.ic_launcher).
+                setContentIntent(pendingIntent).build();
+        startForeground(1, not);
+
+        // Other code goes here...
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private void startLocationService() {
