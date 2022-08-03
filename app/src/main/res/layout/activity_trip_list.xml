@@ -86,7 +86,9 @@
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh"
+            android:layout_below="@+id/tv_today"
             android:layout_width="match_parent"
+            app:swipeRefreshLayoutProgressSpinnerBackgroundColor="@color/black"
             android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -99,6 +101,16 @@
                 tools:listitem="@layout/trip_item" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <ImageView
+            android:id="@+id/iv_no_trip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:visibility="gone"
+            android:background="@color/white"
+            android:src="@drawable/no_order" />
+
 
     </RelativeLayout>
 

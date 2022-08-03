@@ -55,7 +55,6 @@ public class ProfileActivity extends BaseActivity {
                                         binding.editEmail.setText(documentSnapshot.get("email").toString());
                                         binding.textMobile.setText(documentSnapshot.get("mobile").toString());
                                         binding.tvPassword.setText(documentSnapshot.get("password").toString());
-                                        binding.editAddress.setText(documentSnapshot.get("address").toString());
                                     }
                                 }
                             }
@@ -115,7 +114,6 @@ public class ProfileActivity extends BaseActivity {
             user.put("email", binding.editEmail.getText().toString());
             user.put("password", binding.tvPassword.getText().toString());
             user.put("mobile", binding.textMobile.getText().toString());
-            user.put("address", binding.editAddress.getText().toString());
 
             FirebaseFirestore fireStoreInstance = getFireStoreInstance();
             fireStoreInstance.collection("User")
@@ -147,14 +145,12 @@ public class ProfileActivity extends BaseActivity {
         makeEditable(binding.editEmail);
         makeEditable(binding.textMobile);
         makeEditable(binding.tvPassword);
-        makeEditable(binding.editAddress);
         binding.buttonUpdate.setVisibility(View.VISIBLE);
     }
 
     private void makeNotEditable() {
         makeNonEditable(binding.editName);
         makeNonEditable(binding.editEmail);
-        makeNonEditable(binding.editAddress);
         makeNonEditable(binding.textMobile);
         makeNonEditable(binding.tvPassword);
         binding.buttonUpdate.setVisibility(View.GONE);

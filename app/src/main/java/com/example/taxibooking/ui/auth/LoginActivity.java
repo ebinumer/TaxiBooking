@@ -28,7 +28,7 @@ import java.util.Objects;
 public class LoginActivity extends BaseActivity {
     private ActivityLoginBinding binding;
     private final FirebaseFirestore fb = getFireStoreInstance();
-    private boolean isMatch;
+    private boolean isMatch = false;
     private long mLastClickTime = 0;
     private SessionManager sessionManager;
 
@@ -81,11 +81,11 @@ public class LoginActivity extends BaseActivity {
                                 for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                     if (Objects.requireNonNull(documentSnapshot.get("email")).toString().equals(userName) &&
                                             Objects.requireNonNull(documentSnapshot.get("password")).toString().equals(passWord)) {
+
                                         isMatch = true;
-
-
                                         sessionManager.setUserName(documentSnapshot.get("username").toString());
                                         sessionManager.setMobile(documentSnapshot.get("mobile").toString());
+                                        sessionManager.setDocumentId(documentSnapshot.getId());
                                         sessionManager.setLogin(true);
                                         if(Objects.requireNonNull(documentSnapshot.get("username")).toString().equals("driver")){
                                             sessionManager.setIsDriver(true);
@@ -102,8 +102,7 @@ public class LoginActivity extends BaseActivity {
                                             startActivity(intent);
                                             finishAffinity();
                                         }
-                                    } else
-                                        isMatch = false;
+                                    }
                                 }
 
                                 if (!isMatch)
