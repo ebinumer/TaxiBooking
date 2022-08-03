@@ -53,7 +53,7 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
         TextView distanceText = view.findViewById(R.id.tv_distance);
         TextView priceText = view.findViewById(R.id.tv_pound);
         Button btnConfirm = view.findViewById(R.id.btn_confirm);
-        distanceText.setText(df.format(distance / 1000) + " Km");
+        distanceText.setText(df.format(distance / 1600) + " mi");
         Double Km = Double.valueOf(df.format(distance / 1000));
         String Price = String.format("%.2f", Km * 3);
         priceText.setText(Price + " £");
@@ -78,7 +78,6 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
 
 
     private void calculateFare() {
-        double totalFare;
         BigDecimal bigDecimal = new BigDecimal(String.valueOf(distance / 1000));
         int intValue = bigDecimal.intValue();
         Log.d("fare calculation", String.valueOf(intValue));
