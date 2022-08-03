@@ -2,6 +2,7 @@ package com.example.taxibooking.utils;
 
 import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -41,10 +42,8 @@ public class LocationService extends Service {
     SessionManager sessionManager;
     private DatabaseReference mDatabase;
     DatabaseReference reference;
-    Notification notification;
 
-    public LocationService() {
-    }
+    public LocationService() {}
 
     @Override
     public void onCreate() {
@@ -55,17 +54,6 @@ public class LocationService extends Service {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1500);
-        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Loading Dictionary")
-                .setSmallIcon(R.drawable.car_icon)
-                .setOnlyAlertOnce(true)
-                .setOngoing(true)
-                .setProgress(1, 0, false).build();
-
-        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        startForeground(Integer.valueOf(CHANNEL_ID), notification);
-
         super.onCreate();
     }
 
