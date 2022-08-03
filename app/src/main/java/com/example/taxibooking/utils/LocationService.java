@@ -4,11 +4,12 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
@@ -23,7 +24,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.taxibooking.R;
 import com.example.taxibooking.data.prefrence.SessionManager;
-import com.example.taxibooking.ui.SplashActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -49,6 +49,7 @@ public class LocationService extends Service {
 
     public LocationService() {}
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         this.sessionManager = new SessionManager(this);
@@ -58,33 +59,16 @@ public class LocationService extends Service {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1500);
+        runForeground();
         super.onCreate();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        startLocationService();
-//        return START_STICKY;
-        // Tapping the notification will open the specified Activity.
-        Intent activityIntent = new Intent(this, SplashActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationChannel chan = new NotificationChannel(
-                "MyChannelId",
-                "My Foreground Service",
-                NotificationManager.IMPORTANCE_LOW);
-        // This always shows up in the notifications area when this Service is running.
-        // TODO: String localization
-        Notification not = new Notification.Builder(this, "MyChannelId").
-                setContentTitle(getText(R.string.app_name)).
-                setContentInfo("Doing stuff in the background...").setSmallIcon(R.mipmap.ic_launcher).
-                setContentIntent(pendingIntent).build();
-        startForeground(1, not);
-
-        // Other code goes here...
-
-        return super.onStartCommand(intent, flags, startId);
+        runForeground();
+        startLocationService();
+        return START_STICKY;
     }
 
     private void startLocationService() {
@@ -120,12 +104,12 @@ public class LocationService extends Service {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                        Toast.makeText(LocationService.this, "Success", Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(LocationService.this, "Success", Toast.LENGTH_SHORT).show();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(LocationService.this, "Failed", Toast.LENGTH_SHORT).show();
+                                      //  Toast.makeText(LocationService.this, "Failed", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
@@ -135,16 +119,39 @@ public class LocationService extends Service {
         }, Looper.myLooper());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onDestroy() {
+    public void onTaskRemoved(Intent rootIntent) {
         startLocationService();
-        super.onDestroy();
+        super.onTaskRemoved(rootIntent);
     }
-
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void runForeground(){
+//... Pending intent if you want attach it to the notification
+        NotificationChannel chan = new NotificationChannel(
+                "100",
+                "My Foreground Service",
+                NotificationManager.IMPORTANCE_LOW);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
+
+        Notification notification=new NotificationCompat.Builder(this,"100")
+                .setSmallIcon(R.drawable.car_icon)
+                .setContentText(getString(R.string.app_name))
+                .build();
+
+        startForeground(1, notification);
+
     }
 }

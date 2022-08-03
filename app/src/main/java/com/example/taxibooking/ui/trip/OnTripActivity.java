@@ -224,7 +224,16 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
                 super.onLocationResult(locationResult);
             }
         };
-      //  startService(new Intent(this, LocationService.class));
+
+/*        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent i = new Intent(OnTripActivity.this, LocationService.class);
+                ContextCompat.startForegroundService(OnTripActivity.this, i);
+            }
+        }).start();*/
+        Intent i = new Intent(OnTripActivity.this, LocationService.class);
+        ContextCompat.startForegroundService(OnTripActivity.this, i);
     }
 
 
@@ -260,7 +269,7 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
         ) {
             locationPermissionGranted = true;
             //ContextCompat.startForegroundService(this, new Intent(this, LocationService.class));
-            startService(new Intent(this, LocationService.class));
+           // startService(new Intent(this, LocationService.class));
             getDeviceLocation();
 
         } else {
@@ -329,13 +338,13 @@ public class OnTripActivity extends BaseActivity implements OnMapReadyCallback {
     @Override
     protected void onStop() {
         Log.e("Lifecycle", "onStop: ");
-       startService(new Intent(this, LocationService.class));
+      // startService(new Intent(this, LocationService.class));
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        startService(new Intent(this, LocationService.class));
         super.onDestroy();
+        stopService(new Intent(OnTripActivity.this,LocationService.class));
     }
 }
